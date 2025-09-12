@@ -4,12 +4,12 @@ Designing my own CPU.
 
 The basic idea is to keep the core design as simple as possible: minimal instruction set, limited internal registers, limited addressing modes. Each instruction can execute in one clock cycle (plus a clock each for fetch and decode).
 
-Use of microcode is still TBD.
-
 Then, create an "intermediate" assembler that supports additional, more complex instructions that are built on the base instructions.
 
 ## Initial Design Goals
 
+- Use of microcode is TBD.
+  - If initial design uses microcode, eventually update design so it isn't needed
 - 8-bit data bus with 16-bit address bus
 - Simple design with minimal instructions
   - Each instruction should execute in one clock cycle (fetch and decode may be additional cycle each)
@@ -25,6 +25,9 @@ Then, create an "intermediate" assembler that supports additional, more complex 
     - Eventually replace ALU chip with discrete logic
   - Emulator
   - VHDL
+- Track development through a blog
+  - Document each step in the process: why a design decision was made, why something was later changed
+  - Use a tracker table to show progress of my various design goals (implemnted, not implemted yet, will not implement)
  
 ## Registers
 
