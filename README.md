@@ -1,6 +1,12 @@
-# Homemade-CPU
+# Homemade CPU
 
 Designing my own CPU.
+
+The basic idea is to keep the core design as simple as possible: minimal instruction set, limited internal registers, limited addressing modes. Each instruction can execute in one clock cycle (plus a clock each for fetch and decode).
+
+Use of microcode is still TBD.
+
+Then, create an "intermediate" assembler that supports additional, more complex instructions that are built on the base instructions.
 
 ## Initial Design Goals
 
@@ -12,10 +18,11 @@ Designing my own CPU.
 - Create a compiler of sorts to make a more complete instruction set based on the simple instructions
   - 16-bit equivalents of base instruction set
 - No interrupt support
+- Possibly have separate logic for imcrementing the PROGRAM COUNTER instead of updating it through the ALU
 - Build the CPU in:
   - Hardware (7400-series logic)
     - Mostly CMOS, but may use LS logic for ALU
-    - Eventually replace ALU chip with discrete logic chips
+    - Eventually replace ALU chip with discrete logic
   - Emulator
   - VHDL
  
