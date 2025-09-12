@@ -1,3 +1,7 @@
+.vscode/*
+.DS_Store
+
+# The following is GitHub's default .gitignore for C++
 # Prerequisites
 *.d
 
