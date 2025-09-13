@@ -10,6 +10,9 @@ Then, create an "intermediate" assembler that supports additional, more complex 
 
 - Use of microcode is TBD.
   - If initial design uses microcode, eventually update design so it isn't needed
+- Harvard vs. von Neumann architecture TBD
+- Opcode length TBD
+  - Fixed or variable TBD
 - 8-bit data bus with 16-bit address bus
 - Simple design with minimal instructions
   - Each instruction should execute in one clock cycle (fetch and decode may be additional cycle each)
