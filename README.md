@@ -70,33 +70,48 @@ To be refined (not all may be supported by basic CPU).
 
 I chose 4-character mnemonics to simplify the assembler implementation.
 
-| Mnemonic | Description                | Flags (ZCSV) | Notes |
-| -------- | -------------------------- | ------------ | ----- |
-| `NOOP`   | No operation               | ----         |       |
-| `LOAD`   | Memory into register       | ----         |       |
-| `STOR`   | Register into memory       | ----         |       |
-| `COMP`   | Subtract, result discarded | ZCSV         |       |
-| `ADDD`   | Add                        | ZCSV         |       |
-| `SHRL`   | Shift right logical        | Z000         |       |
-| `SHLL`   | Shift left logical         | Z000         |       |
-| `SHRA`   | Shift right arithmetic     | Z0S0         |       |
-| `SHLA`   | Shift left arithmetic      | Z0S0         | This may be same as SHLL      |
-| `ANDD`   | Bitwise AND                | Z000         |       |
-| `ORRR`   | Bitwise OR                 | Z000         |       |
-| `NOTT`   | Bitwise NOT                | Z000         |       |
-| `XORR`   | Bitwise XOR                | Z000         |       |
-| `NAND`   | Bitwise NAND               | Z000         |       |
-| `NORR`   | Bitwise NOR                | Z000         |       |
-| `XNOR`   | Bitwise XNOR               | Z000         |       |
-| `JUMP`   | Unconditional jump             | ----     |       |
-| `JPZS`   | Jump if Zero flag is set       | ----     |       |
-| `JPZC`   | Jump if Zero flag is clear     | ----     |       |
-| `JPCS`   | Jump if Carry flag is set      | ----     |       |
-| `JPCC`   | Jump if Carry flag is clear    | ----     |       |
-| `JPSS`   | Jump if Sign flag is set       | ----     |       |
-| `JPSC`   | Jump if Sign flag is clear     | ----     |       |
-| `JPVS`   | Jump if Overflow flag is set   | ----     |       |
-| `JPVC`   | Jump if Overflow flag is clear | ----     |       |
+| Mnemonic | Description                    | Flags (ZCSV) | Notes |
+| -------- | ------------------------------ | ------------ | ----- |
+| `NOOP`   | No operation                   | ----         |       |
+| `LOAD`   | Memory into register           | ----         |       |
+| `STOR`   | Register into memory           | ----         |       |
+| `COMP`   | Subtract, result discarded     | ZCSV         |       |
+| `ADDD`   | Add                            | ZCSV         |       |
+| `SHRL`   | Shift right logical            | ZC00         | Bit 0 is shifted into Carry flag; bit 7 is set to 0 |
+| `SHLL`   | Shift left logical             | ZC00         | Bit 7 is shifted into Carry flag; bit 0 is set to 0 |
+| `SHRA`   | Shift right arithmetic         | ZCS0         | Bit 7 is shifted into itself and bit 6; bit 0 is shifted into Carry flag |
+| `ROTR`   | Rotate right                   | ZCS0         | Bit 0 is shifed into Carry flag |
+| `RRTC`   | Rotate right through carry     | ZCS0         | Carry flag shifted into bit 7; bit 0 shifted into Carry flag |
+| `ROTL`   | Rotate left                    | ZCS0         | Bit 7 is shifted into Carry flag |
+| `RLTC`   | Rotate left through carry      | ZCS0         | Carry flag shifted into bit 0; but 7 shifted into Carry flag |
+| `ANDD`   | Bitwise AND                    | Z000         |       |
+| `ORRR`   | Bitwise OR                     | Z000         |       |
+| `NOTT`   | Bitwise NOT                    | Z000         |       |
+| `XORR`   | Bitwise XOR                    | Z000         |       |
+| `NAND`   | Bitwise NAND                   | Z000         |       |
+| `NORR`   | Bitwise NOR                    | Z000         |       |
+| `XNOR`   | Bitwise XNOR                   | Z000         |       |
+| `JUMP`   | Unconditional jump             | ----         |       |
+| `JPZS`   | Jump if Zero flag is set       | ----         |       |
+| `JPZC`   | Jump if Zero flag is clear     | ----         |       |
+| `JPCS`   | Jump if Carry flag is set      | ----         |       |
+| `JPCC`   | Jump if Carry flag is clear    | ----         |       |
+| `JPSS`   | Jump if Sign flag is set       | ----         |       |
+| `JPSC`   | Jump if Sign flag is clear     | ----         |       |
+| `JPVS`   | Jump if Overflow flag is set   | ----         |       |
+| `JPVC`   | Jump if Overflow flag is clear | ----         |       |
+
+The "rotate through carry" instructions are included in order to simplify multi-byte shift operations. For example, if you wanted to divide a signed 16-bit value by 2, you could use the following: 
+
+```text
+    LOAD A,MSB
+    SHRA A      ; Previous bit 0 of MSB is now in Carry flag
+    STOR A,MSB
+    LOAD A,LSB
+    RRTC A      ; Bit 0 from MSB is shifted into bit 7 of LSB through Carry flag
+    STOR A, LSB
+```
+
 
 ### Basic instructions that may end up being implemented in intermediate level
 
