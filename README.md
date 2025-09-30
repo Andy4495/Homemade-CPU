@@ -2,135 +2,192 @@
 
 Designing my own CPU.
 
-The basic idea is to keep the core design as simple as possible: minimal instruction set, limited internal registers, limited addressing modes. Each instruction can execute in one clock cycle (plus a clock each for fetch and decode).
-
-Then, create an "intermediate" assembler that supports additional, more complex instructions that are built on the base instructions.
+This is going to be way better than the mess of wires I created for my microprocessor design class many years ago.
 
 ## Initial Design Goals
 
+- 8-bit data, 16-bit address bus
+- Implement with readily-available, off-the-shelf logic chips
+  - 74HCxx-series
 - Based on RISC principles
-  - Efficient execution by pipelined processor
-  - Each instruction should execute in one clock cycle (fetch and decode may be additional cycle each)
+  - Each instruction should execute in one clock cycle (not including fetch)
   - Fixed-length instructions with a simple encoding
-    - May need to consider a special cases for
-      - Long jump to any 16-bit address
-      - Support for 16-bit immediate values
+    - This probably means 16-bit instructions (1 byte opcode, 1 byte operand)
+    - Accessing memory requires a separate load into a high address register
+  - Limited instruction set
+    - Simple enough to implement and execute in one clock, but powerful enough that more complex operations can easily be implemented by the assembler/compiler
+  - No microcode
+  - Although RISC CPUs typically have a high number of internal registers, this implementation will have relatively few registers
 - Little Endian (least significant byte at lowest address)
-- Use of microcode is TBD.
-  - If initial design uses microcode, eventually update design so it isn't needed
-- Support for hard-coded constants (0, 1, 255, 16383, 32767, 65535)
-- Harvard vs. von Neumann architecture TBD
-- Opcode length TBD
-- 8-bit data bus with 16-bit address bus
-- Simple design with minimal instructions
-- Pipeline fetch, decode, execute
-- Create an assembler
-- Create a compiler of sorts to make a more complete instruction set based on the simple instructions
-  - 16-bit equivalents of base instruction set
-- Interrupt support may be added later
-- Possibly have separate logic for incrementing the PROGRAM COUNTER instead of updating it through the ALU
-- Build the CPU in:
-  - Hardware (7400-series logic)
-    - Mostly CMOS, but may use LS logic for ALU
-    - Eventually replace ALU chip with discrete logic
-  - Emulator
-  - VHDL
+- von Neumann architecture
+- PC and SP are implemented with a counter chip (e.g., 74HC161 or 74HC163) for ease of incrementing without having to use the ALU
+- Additional ideas that may be implemented
+  - Pipeline fetch, decode, execute
+  - Support for hard-coded constants (0, 1, 255)
+  - Interrupt support
+- Create and update an assembler as the hardware is implemented
+  - The assembler will probably implement higher-level operations beyond what is supported by the CPU
+    - For example, 16-bit add
+- Create and update an emulator as the hardware is implemented
+- Create and update a hardware model (VHDL or Verilog) as the hardware is implemented
+  - This may lag a little, as my VHDL is a little rusty at this point
 - Track development through a blog
   - Document each step in the process: why a design decision was made, why something was later changed
   - Use a tracker table to show progress of my various design goals (implemnted, not implemted yet, will not implement)
-- Reset vector
-- Interrupt vector (save space for this, even if interrupts are not initially supported)
-- Trap vectors (TBD)
 
 ## Registers
 
-|    |                 |      |
-| -- | --------------- | -----|
-|  A | Accumulator     | |
-|  B | Accumulator     | Actual implementation may be an internal register not available to the programmer |
-|  F | Flags           | ZERO (Z), CARRY (C) , SIGN (S), OVERFLOW (V)  |
-| PC | Program Counter | |
-| SP | Stack Pointer   | |
+### User Accessible Directly
+
+|      |                 |      |
+| ---- | --------------- | -----|
+| `A`  | Accumulator     |      |
+| `F`  | Flags           | ZERO (Z), CARRY (C) , SIGN (S), OVERFLOW (V)  |
+| `PC` | Program Counter | Implemented with a built-in counter chip like 74HC161 or 74HC163 |
+| `SP` | Stack Pointer   |      |
+| `MH` | Memory High     | MSB of memory location use by LOAD and STOR instructions |
+| `JH` | Jump High       | MSB of jump to address for the for JUMP and JPxx instructions |
+
+### User Accessible Indirectly
+
+|      |                 |      |
+| ---- | --------------- | -----|
+| `PC` | Program Counter | Implemented with a built-in counter chip like 74HC161 or 74HC163 |
+
+There are no opcodes that take `PC` as an operand, but the `JUMP` and `JPxx` opcodes update the value of `PC`.
+
+### Internal, Non-User-Accessible
+
+|      |                 |      |
+| ---- | --------------- | -----|
+| `IR` | Instruction     | Last opcode loaded from memory  |
+| `OR` | Operand         | Last operand loaded from memory |
+
+The `OR` (Operand Register) can be thought of as the second accumulator input to the ALU.
 
 ## Addressing Modes
 
-To be refined (not all may be supported by basic CPU).
+| Mode      | Abbreviation | Description |
+| --------- | ------------ | ----------- |
+| Register  | REG          | Operand is a CPU register selected by the instruction |
+| Immediate | IMM          | Operand is included in instruction itself; denoted with `#` |
+| Direct    | DIR          | Instruction contains the address of operand; denoted with `(` and `)`|
+| Indirect  | IND          | Operand is implicit in the instruction |
+| Bit       | BIT          | Manipulate a specific bit within a register |
 
-| | |
-| - | - |
-| Register          | Operand is in a CPU register |
-| Immediate         | Operand is included in instruction itself |
-| Direct            | Instruction contains the full address of operand |
-| Indirect          | Operand is implicit in the instruction |
-| Register Indirect | Register specified by instruction contains address of operand |
-| Indexed           | Instruction uses a dedicated index register plus a displacement specified in the instruction |
-| Bit               | Manipulate a specific bit within memory or a register |
+There are  Register Indirect or Indexed addressing modes are not listed above because there are currently no plans to support thees modes in the CPU or assembler.
 
 ## Basic Instructions
 
 I chose 4-character mnemonics to simplify the assembler implementation.
 
-| Mnemonic | Description                    | Flags (ZCSV) | Notes |
-| -------- | ------------------------------ | ------------ | ----- |
-| `NOOP`   | No operation                   | ----         |       |
-| `LOAD`   | Memory into register           | ----         |       |
-| `STOR`   | Register into memory           | ----         |       |
-| `COMP`   | Subtract, result discarded     | ZCSV         |       |
-| `ADDD`   | Add                            | ZCSV         |       |
-| `SHRL`   | Shift right logical            | ZC00         | Bit 0 is shifted into Carry flag; bit 7 is set to 0 |
-| `SHLL`   | Shift left logical             | ZC00         | Bit 7 is shifted into Carry flag; bit 0 is set to 0 |
-| `SHRA`   | Shift right arithmetic         | ZCS0         | Bit 7 is shifted into itself and bit 6; bit 0 is shifted into Carry flag |
-| `ROTR`   | Rotate right                   | ZCS0         | Bit 0 is shifed into Carry flag |
-| `RRTC`   | Rotate right through carry     | ZCS0         | Carry flag shifted into bit 7; bit 0 shifted into Carry flag |
-| `ROTL`   | Rotate left                    | ZCS0         | Bit 7 is shifted into Carry flag |
-| `RLTC`   | Rotate left through carry      | ZCS0         | Carry flag shifted into bit 0; but 7 shifted into Carry flag |
-| `ANDD`   | Bitwise AND                    | Z000         |       |
-| `ORRR`   | Bitwise OR                     | Z000         |       |
-| `NOTT`   | Bitwise NOT                    | Z000         |       |
-| `XORR`   | Bitwise XOR                    | Z000         |       |
-| `NAND`   | Bitwise NAND                   | Z000         |       |
-| `NORR`   | Bitwise NOR                    | Z000         |       |
-| `XNOR`   | Bitwise XNOR                   | Z000         |       |
-| `JUMP`   | Unconditional jump             | ----         |       |
-| `JPZS`   | Jump if Zero flag is set       | ----         |       |
-| `JPZC`   | Jump if Zero flag is clear     | ----         |       |
-| `JPCS`   | Jump if Carry flag is set      | ----         |       |
-| `JPCC`   | Jump if Carry flag is clear    | ----         |       |
-| `JPSS`   | Jump if Sign flag is set       | ----         |       |
-| `JPSC`   | Jump if Sign flag is clear     | ----         |       |
-| `JPVS`   | Jump if Overflow flag is set   | ----         |       |
-| `JPVC`   | Jump if Overflow flag is clear | ----         |       |
+The Flags column indicates how flags are affected by the operation:
 
-The "rotate through carry" instructions are included in order to simplify multi-byte shift operations. For example, if you wanted to divide a signed 16-bit value by 2, you could use the following: 
+  `-`: Flag is not affected
+  `0`: Flag is cleared
+  `1`: Flag is set
+  `Z`, `C`, `S`, `V`: Flag value depends on result of operation
+
+| Mnemonic | Description                             | Mode     | `ZCSV` (Flags) | Notes |
+| -------- | --------------------------------------- | -------- | -------------- | ----- |
+| `NOOP`   | No operation                            | N/A      | `----`         |       |
+| 'HALT`   | Stop fetching new instructions          | N/A      | `----`         | May want to implement a hardware line to indicate CPU is halted |
+| `LOAD`   | Value into register                     | IMM, DIR | `----`         |       |
+| `STOR`   | Value into memory                       | IMM, DIR | `----`         |       |
+| `MOVE`   | Move value between registers            | REG      | `----`         |       |
+| `COMP`   | Subtract from `A`, result discarded     | IMM      | `ZCSV`         |       |
+| `ADDD`   | Add to `A`                              | IMM      | `ZCSV`         |       |
+| `SHRL`   | Shift right logical on `A`              | IND      | `ZC00`         | Bit 0 is shifted into Carry flag; bit 7 is set to 0 |
+| `SHLL`   | Shift left logical on `A`               | IND      | `ZC00`         | Bit 7 is shifted into Carry flag; bit 0 is set to 0 |
+| `SHRA`   | Shift right arithmetic on `A`           | IND      | `ZCS0`         | Bit 7 is shifted into itself and bit 6; bit 0 is shifted into Carry flag |
+| `ROTR`   | Rotate right  on `A`                    | IND      | `ZCS0`         | Bit 0 is shifed into Carry flag |
+| `RRTC`   | Rotate right through carry  on `A`      | IND      | `ZCS0`         | Carry flag shifted into bit 7; bit 0 shifted into Carry flag |
+| `ROTL`   | Rotate left  on `A`                     | IND      | `ZCS0`         | Bit 7 is shifted into Carry flag |
+| `RLTC`   | Rotate left through carry  on `A`       | IND      | `ZCS0`         | Carry flag shifted into bit 0; but 7 shifted into Carry flag |
+| `ANDD`   | Bitwise AND on `A`                      | IMM      | `Z000`         |       |
+| `ORRR`   | Bitwise OR on `A`                       | IMM      | `Z000`         |       |
+| `NOTT`   | Bitwise NOT on `A`                      | IMM      | `Z000`         | 1's complement     |
+| `XORR`   | Bitwise XOR on `A`                      | IMM      | `Z000`         |       |
+| `NAND`   | Bitwise NAND on `A`                     | IMM      | `Z000`         |       |
+| `NORR`   | Bitwise NOR on `A`                      | IMM      | `Z000`         |       |
+| `XNOR`   | Bitwise XNOR on `A`                     | IMM      | `Z000`         |       |
+| `JUMP`   | Unconditional jump                      | IMM      | `----`         |       |
+| `JPZS`   | Jump if Zero flag is set                | IMM      | `----`         |       |
+| `JPZC`   | Jump if Zero flag is clear              | IMM      | `----`         |       |
+| `JPCS`   | Jump if Carry flag is set               | IMM      | `----`         |       |
+| `JPCC`   | Jump if Carry flag is clear             | IMM      | `----`         |       |
+| `JPSS`   | Jump if Sign flag is set                | IMM      | `----`         |       |
+| `JPSC`   | Jump if Sign flag is clear              | IMM      | `----`         |       |
+| `JPVS`   | Jump if Overflow flag is set            | IMM      | `----`         |       |
+| `JPVC`   | Jump if Overflow flag is clear          | IMM      | `----`         |       |
+| `PUSH`   | Push `A` onto the stack                 | IND      | `----`         |       |
+| `POPS`   | Pop stack into `A`                      | IND      | `----`         |       |
+| `BITS`   | Set a bit in `A`                        | BIT      | `----`         |       |
+| `BITC`   | Clear a bit in `A`                      | BIT      | `----`         |       |
+| `SETZ`   | Set Zero flag bit                       | BIT      | `----`         |       |
+| `CLRZ`   | Clear Zero flag bit                     | BIT      | `----`         |       |
+| `SETC`   | Set Carry flag bit                      | BIT      | `----`         |       |
+| `CLRC`   | Clear Carry flag bit                    | BIT      | `----`         |       |
+| `SETS`   | Set Sign flag bit                       | BIT      | `----`         |       |
+| `CLRS`   | Clear Sign flag bit                     | BIT      | `----`         |       |
+| `SETV`   | Set Overflow flag bit                   | BIT      | `----`         |       |
+| `CLRV`   | Clear Overflow flag bit                 | BIT      | `----`         |       |
+
+The "rotate through carry" instructions are included in order to simplify multi-byte shift operations. For example, if you wanted to divide a signed 16-bit value by 2, you could use the following:
 
 ```text
-    LOAD A,MSB
+    LOAD A,(MSB)
     SHRA A      ; Previous bit 0 of MSB is now in Carry flag
-    STOR A,MSB
-    LOAD A,LSB
+    STOR A,(MSB)
+    LOAD A,(LSB)
     RRTC A      ; Bit 0 from MSB is shifted into bit 7 of LSB through Carry flag
-    STOR A, LSB
+    STOR A,(LSB)
 ```
 
+## Instructions Supported by Assembler
 
-### Basic instructions that may end up being implemented in intermediate level
+In addition to the opcodes listed above that are directly supported by the CPU, the assembler will also support the following instructions. These can easily be implemented by stringing together several basic CPU opcodes.
 
-- Rotate
-- Increment (this is the same as "ADD 1")
-- Decrement (this is the same as "SUBTRACT 1")
+| Mnemonic | Description                             | Flags (ZCSV) | Notes |
+| -------- | --------------------------------------- | ------------ | ----- |
+| `AD16`   | Add two 16 bit values                   | ZCSV         |       |
+| `SU16`   | Subtract two 16 bit values              | ZCSV         |       |
+| `CM08`   | 2's complement 8 bit value              | Z0S0         |       |
+| `CM16`   | 2's complement 16 bit value             | Z0S0         |       |
+| `LJMP`   | Long jump                               | ----         | Combines `LOAD JH,#MSB` and `JUMP #LSB` into an easier-to-read single instruction. |
+| `CALL`   | Call subroutine                         | ----         | Push PC, F, A, MH, JH to stack and jump to location |
+| `RETN`   | Return from subroutine                  | ----         | Pop PC, F, A, MH, JH from stack and continue at PC |
+| `CAZS`   | Call subroutine if Zero flag set        | ----         |       |
+| `CAZC`   | Call subroutine if Zero flag clear      | ----         |       |
+| `CACS`   | Call subroutine if Carry flag set       | ----         |       |
+| `CACC`   | Call subroutine if Carry flag clear     | ----         |       |
+| `CASS`   | Call subroutine if Sign flag set        | ----         |       |
+| `CASC`   | Call subroutine if Sign flag clear      | ----         |       |
+| `CAVS`   | Call subroutine if Overflow  flag set   | ----         |       |
+| `CAVC`   | Call subroutine if Overflow  flag clear | ----         |       |
 
-## Intermediate Instructions
+Index mode instructions may be added later. These aren't strictly necessary, but make using arrays a lot easier.
 
-These will be supported through the use of a "next level" assembler.
+## Next Steps
 
-- ADD (16-bit)
-- ADD (32-bit)
-- SUBTRACT (16-bit)
-- SUBTRACT (32-bit)
-- NEGATE (1's complement: 8, 16, 32 bit)
-- COMPLEMENT (2's complement: 8, 16, 32 bit)
-- CALL
-- CONDITIONAL CALL (one for each of the Flag register bit states)
-- RETURN
-- Individually set/clear bits in FLAGS register
-- Add index addressing modes to existing instructions
+Initial circut:
+
+- Program counter to access memory and load into `A`
+- LEDs to show value of `A` and `PC`
+- Clock circuit with debounced toggle switch
+
+## References
+
+### Books
+
+| Author | Title | Publisher | Edition | Year | ISBN | PDF | Notes |
+| ------ | ----- | --------- | ------- | ---- | ---- | --- | ----- |
+| Hamacher, V. Carl; Zvonko, G Vranesic; Zaky, Safwat G | *Computer Organization* | McGraw-Hill | 3rd | 1990 | 0-07-100742-3 | N/A | |
+
+### Online
+
+- [Gigatron][1] TTL Microcomputer
+- Ben Eater's "Building an 8-bit Breadboard Computer" [playlist][2]
+
+[1]: https://gigatron.io
+[2]: https://www.youtube.com/watch?v=HyznrdDSSGM&list=PLowKtXNTBypGqImE405J2565dvjafglHU
