@@ -83,10 +83,10 @@ I chose 4-character mnemonics to simplify the assembler implementation.
 
 The Flags column indicates how flags are affected by the operation:
 
-  `-`: Flag is not affected
-  `0`: Flag is cleared
-  `1`: Flag is set
-  `Z`, `C`, `S`, `V`: Flag value depends on result of operation
+  `-`: Flag is not affected  
+  `0`: Flag is cleared  
+  `1`: Flag is set  
+  `Z`, `C`, `S`, `V`: Flag value depends on result of operation  
 
 | Mnemonic | Description                              | Mode          | `ZCSV` (Flags) | Notes |
 | -------- | ---------------------------------------- | ------------- | -------------- | ----- |
@@ -112,14 +112,14 @@ The Flags column indicates how flags are affected by the operation:
 | `RLTC`   | Rotate left through carry  on `AC`       | IND           | `ZCS0`         | Carry flag shifted into bit 0; but 7 shifted into Carry flag |
 | `BITS`   | Set a bit in `AC`                        | BIT           | `----`         |       |
 | `BITC`   | Clear a bit in `AC`                      | BIT           | `----`         |       |
-| `SETZ`   | Set Zero flag bit                        | BIT           | `----`         |       |
-| `CLRZ`   | Clear Zero flag bit                      | BIT           | `----`         |       |
-| `SETC`   | Set Carry flag bit                       | BIT           | `----`         |       |
-| `CLRC`   | Clear Carry flag bit                     | BIT           | `----`         |       |
-| `SETS`   | Set Sign flag bit                        | BIT           | `----`         |       |
-| `CLRS`   | Clear Sign flag bit                      | BIT           | `----`         |       |
-| `SETV`   | Set Overflow flag bit                    | BIT           | `----`         |       |
-| `CLRV`   | Clear Overflow flag bit                  | BIT           | `----`         |       |
+| `SETZ`   | Set Zero flag bit                        | BIT           | `1---`         |       |
+| `CLRZ`   | Clear Zero flag bit                      | BIT           | `0---`         |       |
+| `SETC`   | Set Carry flag bit                       | BIT           | `-1--`         |       |
+| `CLRC`   | Clear Carry flag bit                     | BIT           | `-0--`         |       |
+| `SETS`   | Set Sign flag bit                        | BIT           | `--1-`         |       |
+| `CLRS`   | Clear Sign flag bit                      | BIT           | `--0-`         |       |
+| `SETV`   | Set Overflow flag bit                    | BIT           | `---1`         |       |
+| `CLRV`   | Clear Overflow flag bit                  | BIT           | `---0`         |       |
 | `JPZS`   | Jump if Zero flag is set                 | IMM           | `----`         |       |
 | `JPZC`   | Jump if Zero flag is clear               | IMM           | `----`         |       |
 | `JPCS`   | Jump if Carry flag is set                | IMM           | `----`         |       |
