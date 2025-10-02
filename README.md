@@ -33,7 +33,7 @@ See the [Wiki](https://github.com/Andy4495/Homemade-CPU/wiki) for design details
 - Create and update an emulator as the hardware is implemented
 - Create and update a hardware model (VHDL or Verilog) as the hardware is implemented
   - This may lag a little, as my VHDL is a little rusty at this point
-- Track development through a blog
+- Track development
   - Document each step in the process: why a design decision was made, why something was later changed
   - Use a tracker table to show progress of my various design goals (implemnted, not implemted yet, will not implement)
 
