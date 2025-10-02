@@ -45,22 +45,13 @@ Initial circut:
 - LEDs to show value of `AC` and `PC`
 - Clock circuit with debounced toggle switch
 
-## References
+## History
 
-### Books
-
-| Author | Title | Publisher | Edition | Year | ISBN |
-| ------ | ----- | --------- | ------- | ---- | ---- |
-| Hamacher, V. Carl; Zvonko, G Vranesic; Zaky, Safwat G | *Computer Organization*.         | McGraw-Hill     | 3rd | 1990 | 0-07-100742-3 |
-| Dewar, Robert B. K.; Smosna, Matthew | *Microprocessors: A Programmer's View*            | McGraw-Hill     | 1st | 1990 | 0-07-016639-0 |
-| Hayes, John P. | *Computer Architecture and Organization*                                | McGraw-Hill     | 2nd | 1988 | 0-07-027366-9 |
-| Hennessy, John L.; Patterson, David A. | *Computer Architecture: A Quatitative Approach* | Morgan Kaufmann | 1st | 1990 | 1-55860-069-8 |
-| Rafiquzzaman, Mohamed | *Microprocessors and Microcomputer-Based System Design*          | CRC Press       | 1st | 1990 | 0-8493-4275-9 |
-
-### Online
-
-- [Gigatron][1] TTL Microcomputer
-- Ben Eater's "Building an 8-bit Breadboard Computer" [playlist][2]
+| Date | Action |
+| ---- | ------ |
+| Sep-2025 | Document project design goals. Set up repo. |
+| Oct-2025 | Initial CPU design: registers, addressing modes, opcode size and format, instruction set. |
+|          | Create wiki. |
 
 [1]: https://gigatron.io
 [2]: https://www.youtube.com/watch?v=HyznrdDSSGM&list=PLowKtXNTBypGqImE405J2565dvjafglHU
