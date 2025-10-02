@@ -45,14 +45,14 @@ This is going to be way better than the mess of wires I created for my microproc
 | `FL` | Flags               | ZERO (`Z`), CARRY (`C`) , SIGN (`S`), OVERFLOW (`V`)          |
 | `SH` | Stack Pointer MSB   |                                                               |
 | `SL` | Stack Pointer LSB   |                                                               |
-| `MH` | Memory Pointer MSB  | MSB of memory location use by LOAD and STOR instructions      |
-| `JH` | Jump Address MSB    | MSB of jump to address for the for JUMP and JPxx instructions |
+| `MH` | Memory Pointer MSB  | MSB of memory location use by `LOAD` and `STOR` instructions      |
+| `JH` | Jump Address MSB    | MSB of jump to address for the for `JUMP` and `JPxx` instructions |
 
 ### User Accessible Indirectly
 
 |      |                 |                                                                  |
 | ---- | --------------- | ---------------------------------------------------------------- |
-| `PC` | Program Counter | Implemented with a built-in counter chip like 74HC161 or 74HC163 |
+| `PC` | Program Counter |  |
 
 There are no opcodes that take `PC` as an operand, but the `JUMP` and `JPxx` opcodes update the value of `PC`.
 
@@ -75,11 +75,11 @@ The `OR` (Operand Register) can be thought of as the second accumulator input to
 | Indirect  | IND          | Operand is implicit in the instruction                                |
 | Bit       | BIT          | Manipulate a specific bit within a register                           |
 
-There are  Register Indirect or Indexed addressing modes are not listed above because there are currently no plans to support thees modes in the CPU or assembler.
+Register Indirect or Indexed addressing modes may be supported at a future time, either by the Assembler or the CPU directly.
 
 ## Basic Instructions
 
-I chose 4-character mnemonics to simplify the assembler implementation.
+I chose 4-character fixed-length mnemonics to simplify the assembler implementation.
 
 The Flags column indicates how flags are affected by the operation:
 
@@ -93,7 +93,7 @@ The Flags column indicates how flags are affected by the operation:
 | `LOAD`   | Immediate, memory, or register into `AC` | IMM, DIR, REG | `----`         |       |
 | `STOR`   | `AC` into memory or register             | DIR, REG      | `----`         |       |
 | `PUSH`   | Push `AC` onto the stack                 | IND           | `----`         |       |
-| `POPS`   | Pop stack into `AC`                      | IND           | `----`         |       |
+| `POPP`   | Pop stack into `AC`                      | IND           | `----`         |       |
 | `COMP`   | Subtract from `AC`, result discarded     | IMM           | `ZCSV`         |       |
 | `SUBB`   | Subtract from `AC`                       | IMM           | `ZCSV`         |       |
 | `ADDD`   | Add to `AC`                              | IMM           | `ZCSV`         |       |
@@ -110,24 +110,24 @@ The Flags column indicates how flags are affected by the operation:
 | `RRTC`   | Rotate right through carry  on `AC`      | IND           | `ZCS0`         | Carry flag shifted into bit 7; bit 0 shifted into Carry flag |
 | `ROTL`   | Rotate left  on `AC`                     | IND           | `ZCS0`         | Bit 7 is shifted into Carry flag |
 | `RLTC`   | Rotate left through carry  on `AC`       | IND           | `ZCS0`         | Carry flag shifted into bit 0; but 7 shifted into Carry flag |
-| `BITS`   | Set a bit in `AC`                        | BIT           | `----`         |       |
 | `BITC`   | Clear a bit in `AC`                      | BIT           | `----`         |       |
-| `SETZ`   | Set Zero flag bit                        | BIT           | `1---`         |       |
-| `CLRZ`   | Clear Zero flag bit                      | BIT           | `0---`         |       |
-| `SETC`   | Set Carry flag bit                       | BIT           | `-1--`         |       |
-| `CLRC`   | Clear Carry flag bit                     | BIT           | `-0--`         |       |
-| `SETS`   | Set Sign flag bit                        | BIT           | `--1-`         |       |
-| `CLRS`   | Clear Sign flag bit                      | BIT           | `--0-`         |       |
-| `SETV`   | Set Overflow flag bit                    | BIT           | `---1`         |       |
+| `BITS`   | Set a bit in `AC`                        | BIT           | `----`         |       |
 | `CLRV`   | Clear Overflow flag bit                  | BIT           | `---0`         |       |
-| `JPZS`   | Jump if Zero flag is set                 | IMM           | `----`         |       |
-| `JPZC`   | Jump if Zero flag is clear               | IMM           | `----`         |       |
-| `JPCS`   | Jump if Carry flag is set                | IMM           | `----`         |       |
-| `JPCC`   | Jump if Carry flag is clear              | IMM           | `----`         |       |
-| `JPSS`   | Jump if Sign flag is set                 | IMM           | `----`         |       |
-| `JPSC`   | Jump if Sign flag is clear               | IMM           | `----`         |       |
-| `JPVS`   | Jump if Overflow flag is set             | IMM           | `----`         |       |
+| `CLRS`   | Clear Sign flag bit                      | BIT           | `--0-`         |       |
+| `CLRC`   | Clear Carry flag bit                     | BIT           | `-0--`         |       |
+| `CLRZ`   | Clear Zero flag bit                      | BIT           | `0---`         |       |
+| `SETV`   | Set Overflow flag bit                    | BIT           | `---1`         |       |
+| `SETS`   | Set Sign flag bit                        | BIT           | `--1-`         |       |
+| `SETC`   | Set Carry flag bit                       | BIT           | `-1--`         |       |
+| `SETZ`   | Set Zero flag bit                        | BIT           | `1---`         |       |
 | `JPVC`   | Jump if Overflow flag is clear           | IMM           | `----`         |       |
+| `JPSC`   | Jump if Sign flag is clear               | IMM           | `----`         |       |
+| `JPCC`   | Jump if Carry flag is clear              | IMM           | `----`         |       |
+| `JPZC`   | Jump if Zero flag is clear               | IMM           | `----`         |       |
+| `JPVS`   | Jump if Overflow flag is set             | IMM           | `----`         |       |
+| `JPSS`   | Jump if Sign flag is set                 | IMM           | `----`         |       |
+| `JPCS`   | Jump if Carry flag is set                | IMM           | `----`         |       |
+| `JPZS`   | Jump if Zero flag is set                 | IMM           | `----`         |       |
 | `JUMP`   | Unconditional jump                       | IMM           | `----`         |       |
 | `NOOP`   | No operation                             | N/A           | `----`         |       |
 | `HALT`   | Stop fetching new instructions           | N/A           | `----`         |       |
@@ -159,8 +159,8 @@ In addition to the opcodes listed above that are directly supported by the CPU, 
 | `CM16`   | 2's complement 16 bit value              | `Z0S0`         |       |
 | `XNOR`   | Bitwise XNOR on `AC`                     | `Z000`         | `XORR` then `NOTT`     |
 | `LJMP`   | Long jump                                | ----           | Combines `LOAD JH,#MSB` and `JUMP #LSB` into an easier-to-read single instruction |
-| `CALL`   | Call subroutine                          | ----           | Push PC, F, A, MH, JH to stack and jump to location |
-| `RETN`   | Return from subroutine                   | ----           | Pop PC, F, A, MH, JH from stack and continue at PC |
+| `CALL`   | Call subroutine                          | ----           | Push `PC`, `FL`, `AC`, `MH`, `JH` to stack and jump to location |
+| `RETN`   | Return from subroutine                   | ----           | Pop `PC`, `FL`, `AC`, `MH`, `JH` from stack and continue at PC |
 | `CAZS`   | Call subroutine if Zero flag set         | ----           |       |
 | `CAZC`   | Call subroutine if Zero flag clear       | ----           |       |
 | `CACS`   | Call subroutine if Carry flag set        | ----           |       |
@@ -174,56 +174,208 @@ Index mode instructions may be added later. These aren't strictly necessary, but
 
 ## Opcode Format
 
-The CPU will used fixed-length 16-bit instructions. The MSB will be the opcode and the LSB the operand.
+The CPU will use fixed-length 16-bit instructions. The MSB will be the opcode and the LSB the operand.
 
-There are three general types of instructions (2 bits):
+There are four groups of instructions:
 
-- Data movement (ALU not required): `LOAD`, `STOR`, `PUSH`, `POPS`
-- Data manipulation: `ADDD`, `SUBB`, `COMP`, `ANDD`, `ORRR`, `NOTT`, `XORR`, `NAND`, `NORR`, shift, rotate
-- Program control: `JUMP`, `JPxx`, `HALT`, `NOP`
+- Data movement (ALU not required): `LOAD`, `STOR`, `PUSH`, `POPP`
+- Data manipulation: `ADDD`, `SUBB`, `COMP`, `ANDD`, `ORRR`, `NOTT`, `XORR`, `NAND`, `NORR`, `SHxx`, `Rxxx`
 - Bit operations: `BITS`, `BITC`, `SETx`, `CLRx`
+- Program control: `JUMP`, `JPxx`, `HALT`, `NOOP`
 
-### Opcode Bit-Field Breakdown
+### Instruction Group
 
-#### Data movement (0b00xxxxxx)
+Bits 7 and 6 of the opcode indicate the instruction group:
 
-`LOAD`: 3 modes
-`STOR`: 2 modes
-`PUSH`: 1 mode
-`POPS`: 1 mode
+```text
+00 - Data movement
+01 - Data manipulation
+10 - Bit operations
+11 - Program control
+```
 
-Seven operations: 3 bits
+#### Data Movement (`00 mmm rrr`)
 
-Source register for `LOAD` register mode: 3 bits
+##### `mmm`
 
-#### Data manipulation (0b01xxxxxx)
+Bits 5 to 3 (`mmm`) indicate the move type:
 
-Mode (immediate or indirect): 1 bit
-Instruction: 4 bits (either one of 7 IND or one of 9 IMM)
+```text
+000 - LOAD Immediate
+001 - LOAD Direct
+010 - LOAD Register
+011 - STOR Direct
+100 - STOR Register
+101 - PUSH
+110 - POPP
+```
 
-#### Bit Operations (0b10xxxxxx)
+#### `rrr`
 
-These instructions act on either `AC` or `AF`: 1 bit to select register
+Bits 2 to 0 (`rrr`) depend on the addressing mode.
 
-Bit position: 3 bits
+- For Register addressing mode, the bits select the register (source for `LOAD`, destination for `STOR`):
 
-Bit value: 1 bit
+```text
+000 - AC
+001 - FL
+010 - SH
+011 - SL
+100 - MH
+101 - JH
+```
 
-#### Program Control (0b11xxxxxx)
+- For other addressing modes, the bits are unused.
 
-Conditional/Unconditional: 1 bit
+#### Data manipulation (`01 m iiii x`)
 
-Unconditional: 3 bits to select one of 8 possible instructions
+##### `m`
 
-Unconditional: 2 bits to select `JUMP`, `NOOP`, `HALT`
+Bit 5 (`m`) indicates the addressing mode:
 
-### Opcode Definitions
+```text
+0 - Immediate
+1 - Indirect
+```
 
-In progress...
+##### `iiii`
+
+Bits 4 to 1 (`iiii`) select the specific operation.
+
+##### `x`
+
+Bit 0 is unused.
+
+#### Bit Operations (`10 r v bbb y`)
+
+##### `r`
+
+Bit 5 (`r`) selects the register that is being operated on:
+
+```text
+0 - AC
+1 - FL
+```
+
+##### `v`
+
+Bit 4 (`v`) selects the value (1 for set or 0 for clear) of the operation.
+
+##### `bbb`
+
+Bits 3 to 1 (`bbb`) select the bit position that is updated.
+
+##### `y`
+
+Bit 0 is unused.
+
+#### Program Control (`11 u jjjj z`)
+
+##### `u`
+
+Bit 5 (`u`) selects whether the operation is unconditional or conditional.
+
+##### `jjjj`
+
+Bits 4 to 1 (`jjjj`) select the specific operation.
+
+##### `z`
+
+Bit 0 is unused.
+
+### Opcode List
+
+Note that the opcode for `HALT` was intentionally chosen to be `0xFF`.
+
+Opcodes which are not listed are reserved for future use. Functionality of unlisted opcodes should not be assumed to work the same in future iterations of the CPU.
+
+```text
+Opcode  Mnemonic    Mode    Bit fields
+------  ---------   ----    ------------
+Data Movement               00   mmm rrr
+00      LOAD #dd    IMM     00   000 000
+08      LOAD (mm)   DIR     00   001 000
+10      LOAD AC     REG     00   010 000
+11      LOAD FL     REG     00   010 001
+12      LOAD SH     REG     00   010 010
+13      LOAD SL     REG     00   010 011
+14      LOAD MH     REG     00   010 100
+15      LOAD JH     REG     00   010 101
+18      STOR (mm)   DIR     00   011 000
+20      STOR AC     REG     00   100 000
+21      STOR FL     REG     00   100 001
+22      STOR SH     REG     00   100 010
+23      STOR SL     REG     00   100 011
+24      STOR MH     REG     00   100 100
+25      STOR JH     REG     00   010 101
+30      PUSH        IND     00   110 000
+38      POPP        IND     00   111 000
+
+Opcode  Mnemonic    Mode    Bit fields
+------  ---------   ----    ------------
+Data manipulation           01  m iiii x
+40      COMP #dd    IMM     01  0 0000 0
+42      SUBB #dd    IMM     01  0 0001 0
+44      ADDD #dd    IMM     01  0 0010 0
+50      ANDD #dd    IMM     01  0 1000 0
+52      ORRR #dd    IMM     01  0 1001 0
+54      NOTT #dd    IMM     01  0 1010 0
+56      XORR #dd    IMM     01  0 1011 0
+58      NAND #dd    IMM     01  0 1100 0
+59      NORR #dd    IMM     01  0 1101 0
+60      SHRL        IND     01  1 0000 0
+62      SHLL        IND     01  1 0001 0
+64      SHRA        IND     01  1 0010 0
+68      ROTR        IND     01  1 0100 0
+6A      RRTC        IND     01  1 0101 0
+6C      ROTL        IND     01  1 0110 0
+6E      RLTC        IND     01  1 0111 0
+
+Opcode  Mnemonic    Mode    Bit fields
+------  ---------   ----    ------------
+Bit Operations              10 r v bbb y
+80      BITC 0      BIT     10 0 0 000 0
+82      BITC 1      BIT     10 0 0 001 0
+84      BITC 2      BIT     10 0 0 010 0
+86      BITC 3      BIT     10 0 0 011 0
+88      BITC 4      BIT     10 0 0 100 0
+8A      BITC 5      BIT     10 0 0 101 0
+8C      BITC 6      BIT     10 0 0 110 0
+8E      BITC 7      BIT     10 0 0 111 0
+90      BITS 0      BIT     10 0 1 000 0
+92      BITS 1      BIT     10 0 1 001 0
+92      BITS 2      BIT     10 0 1 010 0
+92      BITS 3      BIT     10 0 1 011 0
+92      BITS 4      BIT     10 0 1 100 0
+92      BITS 5      BIT     10 0 1 101 0
+92      BITS 6      BIT     10 0 1 110 0
+92      BITS 7      BIT     10 0 1 111 0
+A0      CLRV        BIT     10 1 0 000 0
+A2      CLRS        BIT     10 1 0 001 0
+A4      CLRC        BIT     10 1 0 010 0
+A6      CLRZ        BIT     10 1 0 011 0
+B0      SETV        BIT     10 1 1 000 0
+B2      SETS        BIT     10 1 1 001 0
+B4      SETC        BIT     10 1 1 010 0
+B6      SETZ        BIT     10 1 1 011 0
+
+Opcode  Mnemonic    Mode    Bit fields
+------  ---------   ----    ------------
+Program Control             11  u jjjj z
+C0      JPVC        IMM     11  0 0000 0
+C2      JPSC        IMM     11  0 0001 0
+C4      JPCC        IMM     11  0 0010 0
+C6      JPZC        IMM     11  0 0011 0
+D0      JPVS        IMM     11  0 1000 0
+D2      JPSS        IMM     11  0 1001 0
+D4      JPCS        IMM     11  0 1010 0
+D6      JPZS        IMM     11  0 1011 0
+E0      JUMP        IMM     11  1 0000 0
+FC      NOOP        N/A     11  1 1110 0
+FF      HALT        N/A     11  1 1111 1
+```
 
 ## Next Steps
-
-Opcode table
 
 Initial circut:
 
@@ -235,9 +387,13 @@ Initial circut:
 
 ### Books
 
-| Author | Title | Publisher | Edition | Year | ISBN | PDF | Notes |
-| ------ | ----- | --------- | ------- | ---- | ---- | --- | ----- |
-| Hamacher, V. Carl; Zvonko, G Vranesic; Zaky, Safwat G | *Computer Organization* | McGraw-Hill | 3rd | 1990 | 0-07-100742-3 | N/A | |
+| Author | Title | Publisher | Edition | Year | ISBN |
+| ------ | ----- | --------- | ------- | ---- | ---- |
+| Hamacher, V. Carl; Zvonko, G Vranesic; Zaky, Safwat G | *Computer Organization*.         | McGraw-Hill     | 3rd | 1990 | 0-07-100742-3 |
+| Dewar, Robert B. K.; Smosna, Matthew | *Microprocessors: A Programmer's View*            | McGraw-Hill     | 1st | 1990 | 0-07-016639-0 |
+| Hayes, John P. | *Computer Architecture and Organization*                                | McGraw-Hill     | 2nd | 1988 | 0-07-027366-9 |
+| Hennessy, John L.; Patterson, David A. | *Computer Architecture: A Quatitative Approach* | Morgan Kaufmann | 1st | 1990 | 1-55860-069-8 |
+| Rafiquzzaman, Mohamed | *Microprocessors and Microcomputer-Based System Design*          | CRC Press       | 1st | 1990 | 0-8493-4275-9 |
 
 ### Online
 
