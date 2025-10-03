@@ -1,0 +1,51 @@
+# https://github.com/lycheeverse/lychee-action
+# https://github.com/lycheeverse/lychee
+# This action is specifically to check the links in the wiki files
+
+name: Check Wiki Links
+
+on:
+  gollum:
+  schedule:
+    # Run monthly
+    # GitHub actions uses UTC for time zone
+    # crontab format: minute hour day-of-month month day-of-week
+    - cron: "1 6 4 * *"
+  workflow_dispatch:
+    inputs:
+      message:
+        description: Message to display in job summary
+        required: false
+        type: string
+      override-args:
+        description: Override default arguments (see https://github.com/lycheeverse/lychee#commandline-parameters)
+        required: false
+        type: string
+
+jobs:
+  link-checker-wiki:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          repository: ${{ github.repository }}.wiki
+          path: wiki_repo
+          token: ${{ secrets.WIKI_TOKEN }}
+      - name: Print out *.md files to be analyzed
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: --verbose --no-progress --dump-inputs ./*.md ./*/*.md  ./extras/**/*.md 
+          fail: true
+      - name: Link Checker default args
+        uses: lycheeverse/lychee-action@v2
+        with:
+          # See https://github.com/lycheeverse/lychee/issues/1577 for details on why you need to use --root-dir $PWD instead of --base .
+          # args: --root-dir $PWD --verbose --no-progress -a '200,403,429,500' './**/*.md' 
+          # args: --config ./.github/workflows/lychee.toml './**/*.md'
+          # Need to use ./*.md _and_ ./**/.md because runner shell glob processing does not include current dir
+          # Need --exclude-path $PWD/lychee because act environment picks up the lychee/out.md file 
+          # If there are files more than one directory below ., then need to add as extra-input-files
+          args: --verbose --no-progress -a '200,403,429,500' --root-dir $PWD --exclude-path $PWD/lychee ./*.md ./*/*.md ./extras/**/*.md
+          fail: true
+
+    
