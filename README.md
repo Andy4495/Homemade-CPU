@@ -52,6 +52,3 @@ Initial circut:
 | Sep-2025 | Document project design goals. Set up repo. |
 | Oct-2025 | Initial CPU design: registers, addressing modes, opcode size and format, instruction set. |
 |          | Create wiki. |
-
-[1]: https://gigatron.io
-[2]: https://www.youtube.com/watch?v=HyznrdDSSGM&list=PLowKtXNTBypGqImE405J2565dvjafglHU
