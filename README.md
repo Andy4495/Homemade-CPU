@@ -39,6 +39,8 @@ See the [Wiki](https://github.com/Andy4495/Homemade-CPU/wiki) for design details
 
 ## Next Steps
 
+Create an emulator/disassembler: add support for the Homemade CPU to my existing [emulator-8-bit][1] application.
+
 Initial circut:
 
 - Program counter to access memory and load into `AC`
@@ -52,3 +54,5 @@ Initial circut:
 | Sep-2025 | Document project design goals. Set up repo. |
 | Oct-2025 | Initial CPU design: registers, addressing modes, opcode size and format, instruction set. |
 |          | Create wiki. |
+
+[1]: https://github.com/Andy4495/emulator-8-bit
