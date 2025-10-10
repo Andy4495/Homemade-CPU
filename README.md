@@ -44,6 +44,8 @@ See the [Wiki](https://github.com/Andy4495/Homemade-CPU/wiki) for design details
 
 Create an emulator/disassembler: add support for the Homemade CPU to my existing [emulator-8-bit][1] application.
 
+- [10-Oct-2025] The emulator and disassembler have been implemented, and some manual tests have been run. Still need to run more complete tests and create some automated test actions.
+
 Initial circut:
 
 - Program counter to access memory and load into `AC`
@@ -57,6 +59,6 @@ Initial circut:
 | Sep-2025 | Document project design goals. Set up repo. |
 | Oct-2025 | Initial CPU design: registers, addressing modes, opcode size and format, instruction set. |
 |          | Create wiki. |
-|          | Implement [emulator][1], starting with disassembler. |
+|          | Implement [emulator][1]: disassembler, emulator, automated tests. |
 
 [1]: https://github.com/Andy4495/emulator-8-bit
