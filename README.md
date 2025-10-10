@@ -54,5 +54,6 @@ Initial circut:
 | Sep-2025 | Document project design goals. Set up repo. |
 | Oct-2025 | Initial CPU design: registers, addressing modes, opcode size and format, instruction set. |
 |          | Create wiki. |
+|          | Implement [emulator][1], starting with disassembler. |
 
 [1]: https://github.com/Andy4495/emulator-8-bit
