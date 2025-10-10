@@ -1,5 +1,8 @@
 # Homemade CPU
 
+[![Check Links](https://github.com/Andy4495/Homemade-CPU/actions/workflows/check-links.yml/badge.svg)](https://github.com/Andy4495/Homemade-CPU/actions/workflows/check-links.yml)
+[![Check Wiki Links](https://github.com/Andy4495/Homemade-CPU/actions/workflows/check-wiki-links.yml/badge.svg)](https://github.com/Andy4495/Homemade-CPU/actions/workflows/check-wiki-links.yml)
+
 Designing my own CPU.
 
 This is going to be way better than the mess of wires I created for my microprocessor design class many years ago.
