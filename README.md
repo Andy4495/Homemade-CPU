@@ -9,6 +9,8 @@ This is going to be way better than the mess of wires I created for my microproc
 
 See the [Wiki](https://github.com/Andy4495/Homemade-CPU/wiki) for design details and documentation.
 
+An [emulator][1] is also available to run the CPU instructions and compare with the actual hardware.
+
 ## Initial Design Goals
 
 - 8-bit data, 16-bit address bus
