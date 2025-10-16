@@ -7,20 +7,22 @@ Designing my own CPU.
 
 This is going to be way better than the mess of wires I created for my microprocessor design class many years ago.
 
-See the [Wiki](https://github.com/Andy4495/Homemade-CPU/wiki) for design details and documentation.
+See the [Wiki][2] for design details and documentation.
 
-An [emulator][1] is also available to run the CPU instructions and compare with the actual hardware.
+An [emulator][1] is available to run the CPU instructions and compare with the actual hardware.
 
-## Initial Design Goals
+## Updates
+
+- 15-Oct-2025: Updated design to use 8-bit opcodes. See the [wiki][2] pages under the "Current Design" heading for the updated design. The old design is available under the "Previous Design" heading.
+
+## Design Goals
 
 - 8-bit data, 16-bit address bus
 - Implement with readily-available, off-the-shelf logic chips
   - 74HCxx-series
 - Based on RISC principles
   - Each instruction should execute in one clock cycle (not including fetch)
-  - Fixed-length instructions with a simple encoding
-    - This probably means 16-bit instructions (1 byte opcode, 1 byte operand)
-    - Accessing memory requires a separate load into a high address register
+  - Fixed-length 8-bit instructions
   - Limited instruction set
     - Simple enough to implement and execute in one clock, but powerful enough that more complex operations can easily be implemented by the assembler/compiler
   - No microcode
@@ -62,5 +64,8 @@ Initial circut:
 | Oct-2025 | Initial CPU design: registers, addressing modes, opcode size and format, instruction set. |
 |          | Create wiki. |
 |          | Implement [emulator][1]: disassembler, emulator, automated tests. |
+|          | Update design to version 2 to use 8-bit instructions instead of 16-bit. |
+|          | - Updated [emulator][1] to support design version 2. |
 
 [1]: https://github.com/Andy4495/emulator-8-bit
+[2]: https://github.com/Andy4495/Homemade-CPU/wiki
