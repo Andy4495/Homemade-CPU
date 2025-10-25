@@ -13,11 +13,11 @@ An [emulator][1] is available to run the CPU instructions and compare with the a
 
 ## Latest Updates
 
-### [2025-Oct-24: Starting on the Hardware][ref]
+### 2025-Oct-24: Starting on the Hardware
 
 [ref]: https://github.com/Andy4495/Homemade-CPU/wiki/Blog#2025-oct-24-starting-on-the-hardware
 
-Now that I have a pretty good idea on the design of the CPU, it's time to get started on the hardware. First step is the clock generator circuit.
+Now that I have a pretty good idea on the design of the CPU, it's time to get started on the hardware. First step is the clock generator circuit. [(full blog entry...)][ref]
 
 ## Design Goals
 
