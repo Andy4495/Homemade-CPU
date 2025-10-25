@@ -5,15 +5,19 @@
 
 Designing my own CPU.
 
-This is going to be way better than the mess of wires I created for my microprocessor design class many years ago.
+Check out my [blog][3] to see my progress.
 
 See the [Wiki][2] for design details and documentation.
 
 An [emulator][1] is available to run the CPU instructions and compare with the actual hardware.
 
-## Updates
+## Latest Updates
 
-- 15-Oct-2025: Updated design to use 8-bit opcodes. See the [wiki][2] pages under the "Current Design" heading for the updated design. The old design is available under the "Previous Design" heading.
+### [2025-Oct-24: Starting on the Hardware][ref]
+
+[ref]: https://github.com/Andy4495/Homemade-CPU/wiki/Blog#2025-oct-24-starting-on-the-hardware
+
+Now that I have a pretty good idea on the design of the CPU, it's time to get started on the hardware. First step is the clock generator circuit.
 
 ## Design Goals
 
@@ -69,3 +73,4 @@ Initial circut:
 
 [1]: https://github.com/Andy4495/emulator-8-bit
 [2]: https://github.com/Andy4495/Homemade-CPU/wiki
+[3]: https://github.com/Andy4495/Homemade-CPU/wiki/Blog
