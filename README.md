@@ -13,11 +13,11 @@ An [emulator][1] is available to run the CPU instructions and compare with the a
 
 ## Latest Updates
 
-### 2025-Oct-24: Starting on the Hardware
+## 2025-Oct-28: Instruction Set Update
 
-[ref]: https://github.com/Andy4495/Homemade-CPU/wiki/Blog#2025-oct-24-starting-on-the-hardware
+As I was working on the overall block diagram and data connections between the various components, I realized that implementing the `PUSH` and `POPP` stack operations for every register makes the internal CPU connections much more complicated than I wanted. [(full blog entry...)][ref]
 
-Now that I have a pretty good idea on the design of the CPU, it's time to get started on the hardware. First step is the clock generator circuit. [(full blog entry...)][ref]
+[ref]: https://github.com/Andy4495/Homemade-CPU/wiki/Blog#2025-oct-28-instruction-set-update
 
 ## Design Goals
 
