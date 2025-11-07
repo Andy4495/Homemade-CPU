@@ -3,27 +3,24 @@
 [![Check Links](https://github.com/Andy4495/Homemade-CPU/actions/workflows/check-links.yml/badge.svg)](https://github.com/Andy4495/Homemade-CPU/actions/workflows/check-links.yml)
 [![Check Wiki Links](https://github.com/Andy4495/Homemade-CPU/actions/workflows/check-wiki-links.yml/badge.svg)](https://github.com/Andy4495/Homemade-CPU/actions/workflows/check-wiki-links.yml)
 
-Designing my own CPU.
+Designing my own CPU:
 
-Check out my [blog][3] to see my progress.
-
-See the [Wiki][2] for design details and documentation.
-
-An [emulator][1] is available to run the CPU instructions and compare with the actual hardware.
+- [Blog][3] documenting my progress
+- [Wiki][2] for design details and documentation
+- [Emulator][1] to run the CPU instructions and compare with the actual hardware
 
 ## Latest Updates
 
-## 2025-Oct-28: Instruction Set Update
+## 2025-Nov-07: Fetch Logic -  Program Counter and Instruction Register Hardware
 
-As I was working on the overall block diagram and data connections between the various components, I realized that implementing the `PUSH` and `POPP` stack operations for every register makes the internal CPU connections much more complicated than I wanted. [(full blog entry...)][ref]
+I have implemented the `PC` and fetch logic in hardware: the clock increments the `PC` and fetches an instruction into `IR` with each clock cycle. `PC` is incremented on the rising edge of the clock, and `IR` latches the instruction from memory on the falling edge. [(full blog entry...)][ref]
 
-[ref]: https://github.com/Andy4495/Homemade-CPU/wiki/Blog#2025-oct-28-instruction-set-update
+[ref]: https://github.com/Andy4495/Homemade-CPU/wiki/Blog#2025-nov-07-fetch-program-counter-and-instruction-register-hardware
 
 ## Design Goals
 
 - 8-bit data, 16-bit address bus
-- Implement with readily-available, off-the-shelf logic chips
-  - 74HCxx-series
+- Implement with readily-available, off-the-shelf 74HCxx-series logic chips
 - Based on RISC principles
   - Each instruction should execute in one clock cycle (not including fetch)
   - Fixed-length 8-bit instructions
@@ -33,43 +30,33 @@ As I was working on the overall block diagram and data connections between the v
   - Although RISC CPUs typically have a high number of internal registers, this implementation will have relatively few registers
 - Little Endian (least significant byte at lowest address)
 - von Neumann architecture
-- PC and SP are implemented with a counter chip (e.g., 74HC161 or 74HC163) for ease of incrementing without having to use the ALU
-- Additional ideas that may be implemented
-  - Pipeline fetch, decode, execute
-  - Support for hard-coded constants (0, 1, 255)
-  - Interrupt support
-- Create and update an assembler as the hardware is implemented
-  - The assembler will probably implement higher-level operations beyond what is supported by the CPU
-    - For example, 16-bit add
-- Create and update an emulator as the hardware is implemented
-- Create and update a hardware model (VHDL or Verilog) as the hardware is implemented
+- `PC` and `SP` are implemented with counter chips (74HC161 for `PC`, 74HC193 or 74HC194 for `SP`) for ease of incrementing/decrementing without having to use the ALU
+
+## Longer Term
+
+- Create an assembler
+  - The assembler will also implement higher-level operations beyond what is supported by the CPU
+- Create a hardware model (VHDL or Verilog)
   - This may lag a little, as my VHDL is a little rusty at this point
-- Track development
-  - Document each step in the process: why a design decision was made, why something was later changed
-  - Use a tracker table to show progress of my various design goals (implemnted, not implemted yet, will not implement)
+- Additional CPU improvements not implemented in the first iteration of the design:
+  - Pipeline fetch, decode, execute
+  - Interrupt support
 
 ## Next Steps
 
-Create an emulator/disassembler: add support for the Homemade CPU to my existing [emulator-8-bit][1] application.
-
-- [10-Oct-2025] The emulator and disassembler have been implemented, and some manual tests have been run. Still need to run more complete tests and create some automated test actions.
-
-Initial circut:
-
-- Program counter to access memory and load into `AC`
-- LEDs to show value of `AC` and `PC`
-- Clock circuit with debounced toggle switch
+Start implementing the instruction decoding logic.
 
 ## History
 
-| Date | Action |
-| ---- | ------ |
+| Date.    | Activity |
+| -------- | -------- |
 | Sep-2025 | Document project design goals. Set up repo. |
 | Oct-2025 | Initial CPU design: registers, addressing modes, opcode size and format, instruction set. |
 |          | Create wiki. |
 |          | Implement [emulator][1]: disassembler, emulator, automated tests. |
 |          | Update design to version 2 to use 8-bit instructions instead of 16-bit. |
 |          | - Updated [emulator][1] to support design version 2. |
+| Nov-2025 | `PC`, `IR`, and related hardware implemented for instruction fetch, `PC` incrementing |
 
 [1]: https://github.com/Andy4495/emulator-8-bit
 [2]: https://github.com/Andy4495/Homemade-CPU/wiki
