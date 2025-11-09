@@ -17,6 +17,8 @@ I have implemented the `PC` and fetch logic in hardware: the clock increments th
 
 [ref]: https://github.com/Andy4495/Homemade-CPU/wiki/Blog#2025-nov-07-fetch-program-counter-and-instruction-register-hardware
 
+![Breadboard](./pics/PC-IR-Fetch.JPG)
+
 ## Design Goals
 
 - 8-bit data, 16-bit address bus
