@@ -11,11 +11,17 @@ Designing my own CPU:
 
 ## Latest Updates
 
-## 2025-Nov-07: Fetch Logic -  Program Counter and Instruction Register Hardware
+## 2025-Nov-17: Fetch Logic - Transferred to Protoboard
 
-I have implemented the `PC` and fetch logic in hardware: the clock increments the `PC` and fetches an instruction into `IR` with each clock cycle. `PC` is incremented on the rising edge of the clock, and `IR` latches the instruction from memory on the falling edge. [(full blog entry...)][ref]
+I transferred my PC and IR circuit from a solderless breadboard to a soldered breadboard. I needed breadboard space for my next circuit block implementation, and the PC/IR circuit is stable and fairly complete. [(full blog entry...)][ref]
 
-[ref]: https://github.com/Andy4495/Homemade-CPU/wiki/Blog#2025-nov-07-fetch-program-counter-and-instruction-register-hardware
+[ref]: https://github.com/Andy4495/Homemade-CPU/wiki/Blog#progress-blog
+
+Protoboard:
+
+![Protoboard](./pics/PC-IR-Fetch-Proto.JPG)
+
+Compared to the original breadboard:
 
 ![Breadboard](./pics/PC-IR-Fetch.JPG)
 
@@ -50,7 +56,7 @@ Start implementing the instruction decoding logic.
 
 ## History
 
-| Date.    | Activity |
+| Date     | Activity |
 | -------- | -------- |
 | Sep-2025 | Document project design goals. Set up repo. |
 | Oct-2025 | Initial CPU design: registers, addressing modes, opcode size and format, instruction set. |
