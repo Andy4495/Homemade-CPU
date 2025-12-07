@@ -11,19 +11,21 @@ Designing my own CPU:
 
 ## Latest Updates
 
-## 2025-Nov-17: Fetch Logic - Transferred to Protoboard
+## 2025-Dec-06: Instruction Set Updates
 
-I transferred my PC and IR circuit from a solderless breadboard to a soldered breadboard. I needed breadboard space for my next circuit block implementation, and the PC/IR circuit is stable and fairly complete. [(full blog entry...)][ref]
+I made some updates to the instruction set and hardware design:
+
+- Moved the `EXCH` instruction from the core CPU implementation to the assembler
+  - That instruction in particular required too many connections to and from `AB` and `AA`
+- Removed the hardcoded load instructions (`LDA1`, `LDAF`, `LDB1`, `LDBF`)
+  - These provided minimal benefit (1 clock cycle) compared to the additonal hardware needed
+- Moved the bit set and clear instructions for `AA` (`BCAA`, `BSAA`) to be implemented by the assembler
+- Created another register (`AC`) which can be used as a counter register for loops and for temporary storage. It is not connected to the ALU or `AB`, so minimal additional hardware is needed.
+  - Relevant instructions were added to support the new register
+  
+[(full blog entry...)][ref]
 
 [ref]: https://github.com/Andy4495/Homemade-CPU/wiki/Blog#progress-blog
-
-Protoboard:
-
-![Protoboard](./pics/PC-IR-Fetch-Proto.JPG)
-
-Compared to the original breadboard:
-
-![Breadboard](./pics/PC-IR-Fetch.JPG)
 
 ## Design Goals
 
